@@ -1,0 +1,13 @@
+/* Remove dots from the nav list */
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove underline from all nav links */
+.nav-list a,
+.no-underline {
+  text-decoration: none;
+  color: inherit;
+}
