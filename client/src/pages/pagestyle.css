@@ -22,3 +22,7 @@ header {
     text-align: center;
     margin-top: 20px;
 }
+
+label {
+    padding-bottom: 6px;
+}
