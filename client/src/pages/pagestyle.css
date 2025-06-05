@@ -26,3 +26,17 @@ header {
 label {
     padding-bottom: 6px;
 }
+
+thead {
+  background-color: rgb(144, 223, 41);
+  color: white;
+}
+/* td,
+label,
+small {
+  color: white;
+} */
+
+tbody {
+      background-color: rgb(2, 2, 61);
+}

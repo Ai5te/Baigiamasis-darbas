@@ -4,9 +4,9 @@ const customerSchema = new mongoose.Schema({
   name: String,
   surname: String,
   iban: { type: String, unique: true, required: true },
-  personalCode: String,
+  personalCode: { type: String, unique: true, required: true },
   balance: { type: Number, default: 0 },
-  passport: String // store file path or base64 string
+  passport: String
 });
 
 const Customer = mongoose.model('Customer', customerSchema);

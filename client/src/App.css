@@ -12,19 +12,16 @@
   color: inherit;
 }
 
-/* Make the app take full height and use flexbox */
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Main content grows to fill space */
 .app-container > main {
   flex: 1;
 }
 
-/* Footer styles (optional, for width) */
 footer {
   width: 100%;
 }

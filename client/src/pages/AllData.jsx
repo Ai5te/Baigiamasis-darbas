@@ -31,8 +31,8 @@ export default function AllData() {
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("surname", form.surname);
-    formData.append("iban", form.iban);
-    formData.append("idCode", form.personalCode);
+    // formData.append("iban", form.iban);
+    formData.append("personalCode", form.personalCode);
     if (form.passport) formData.append("passport", form.passport);
 
     const res = await fetch("http://localhost:3001/api/customers", {
@@ -103,7 +103,7 @@ export default function AllData() {
               type="text"
               name="personalCode"
               placeholder="Personal Code"
-              value={form.idCode}
+              value={form.personalCode}
               onChange={handleChange}
               required
               className="form-control"
@@ -115,7 +115,7 @@ export default function AllData() {
               name="passport"
               accept="image/*"
               onChange={handleChange}
-              required
+              // required
               className="form-control"
             />
           </div>
