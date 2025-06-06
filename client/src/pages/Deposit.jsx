@@ -2,26 +2,37 @@ import { useState } from "react";
 
 export default function Deposit() {
   const [search, setSearch] = useState({ name: "", surname: "", personalCode: "" });
-  const [customer, setCustomer] = useState(null);
+  const [customers, setCustomers] = useState([]); // store all matches
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSearch = async (e) => {
     e.preventDefault();
     setMessage("");
-    // Fetch all customers and filter (for demo; for real app, use backend search)
+    setSelectedCustomer(null);
+    // Fetch all customers and filter
     const res = await fetch("http://localhost:3001/api/customers");
-    const customers = await res.json();
-    const found = customers.find(c =>
-      c.name.toLowerCase() === search.name.toLowerCase() &&
-      c.surname.toLowerCase() === search.surname.toLowerCase() &&
-      (search.personalCode ? c.personalCode === search.personalCode : true)
-    );
-    if (found) {
-      setCustomer(found);
+    const allCustomers = await res.json();
+    let matches = allCustomers;
+
+    if (search.personalCode) {
+      matches = matches.filter(c => c.personalCode === search.personalCode);
     } else {
-      setCustomer(null);
-      setMessage("Customer not found.");
+      if (search.name) {
+        matches = matches.filter(c => c.name.toLowerCase() === search.name.toLowerCase());
+      }
+      if (search.surname) {
+        matches = matches.filter(c => c.surname.toLowerCase() === search.surname.toLowerCase());
+      }
+    }
+
+    setCustomers(matches);
+    if (matches.length === 0) {
+      setMessage("No customers found.");
+    }
+    if (matches.length === 1) {
+      setSelectedCustomer(matches[0]);
     }
   };
 
@@ -32,14 +43,14 @@ export default function Deposit() {
       setMessage("Enter a valid amount.");
       return;
     }
-    const res = await fetch(`http://localhost:3001/api/customers/${customer._id}/deposit`, {
+    const res = await fetch(`http://localhost:3001/api/customers/${selectedCustomer._id}/deposit`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: Number(amount) })
     });
     const data = await res.json();
     if (res.ok) {
-      setCustomer(data);
+      setSelectedCustomer(data);
       setAmount("");
       setMessage("Deposit successful!");
     } else {
@@ -59,7 +70,6 @@ export default function Deposit() {
               placeholder="Name"
               value={search.name}
               onChange={e => setSearch({ ...search, name: e.target.value })}
-              required
             />
           </div>
           <div className="col">
@@ -69,7 +79,6 @@ export default function Deposit() {
               placeholder="Surname"
               value={search.surname}
               onChange={e => setSearch({ ...search, surname: e.target.value })}
-              required
             />
           </div>
           <div className="col">
@@ -87,14 +96,35 @@ export default function Deposit() {
         </div>
       </form>
       {message && <div className="alert alert-info">{message}</div>}
-      {customer && (
+
+      {/* Show list if multiple customers found */}
+      {customers.length > 1 && (
+        <div className="mb-3">
+          <h5>Select a customer:</h5>
+          <ul className="list-group">
+            {customers.map(c => (
+              <li
+                key={c._id}
+                className="list-group-item"
+                style={{ cursor: "pointer" }}
+                onClick={() => setSelectedCustomer(c)}
+              >
+                {c.name} {c.surname} (Code: {c.personalCode}, Balance: {c.balance} €)
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Show customer info and deposit form if one is selected */}
+      {selectedCustomer && (
         <div className="card p-3 mb-3">
           <h5>Customer Info</h5>
-          <p><strong>Name:</strong> {customer.name}</p>
-          <p><strong>Surname:</strong> {customer.surname}</p>
-          <p><strong>IBAN:</strong> {customer.iban}</p>
-          <p><strong>Personal Code:</strong> {customer.personalCode}</p>
-          <p><strong>Balance:</strong> {customer.balance} €</p>
+          <p><strong>Name:</strong> {selectedCustomer.name}</p>
+          <p><strong>Surname:</strong> {selectedCustomer.surname}</p>
+          <p><strong>IBAN:</strong> {selectedCustomer.iban}</p>
+          <p><strong>Personal Code:</strong> {selectedCustomer.personalCode}</p>
+          <p><strong>Balance:</strong> {selectedCustomer.balance} €</p>
           <form onSubmit={handleDeposit} className="row g-2 align-items-center">
             <div className="col-auto">
               <input

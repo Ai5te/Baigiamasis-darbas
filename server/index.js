@@ -58,10 +58,10 @@ function isValidPersonalCode(code) {
   }
   // Checksum
   const digits = code.split('').map(Number);
-  const k1 = [1,2,3,4,5,6,7,8,9,1,2];
-  const k2 = [3,4,5,6,7,8,9,1,2,3,4];
+  const k1 = [1,2,3,4,5,6,7,8,9,1];
+  const k2 = [3,4,5,6,7,8,9,1,2,3];
   let sum1 = 0, sum2 = 0;
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i < 10; i++) {
     sum1 += digits[i] * k1[i];
     sum2 += digits[i] * k2[i];
   }
@@ -70,6 +70,34 @@ function isValidPersonalCode(code) {
   if (control === 10) control = 0;
   return control === digits[10];
 }
+
+function generateValidPersonalCode(firstDigit, year, month, day) {
+  const y = year.toString().padStart(2, '0');
+  const m = month.toString().padStart(2, '0');
+  const d = day.toString().padStart(2, '0');
+  let base = `${firstDigit}${y}${m}${d}`;
+
+  // Add 3 random digits (serial number)
+  for (let i = 0; i < 3; i++) {
+    base += Math.floor(Math.random() * 10);
+  }
+
+  const digits = base.split('').map(Number);
+
+  const k1 = [1,2,3,4,5,6,7,8,9,1,2];
+  const k2 = [3,4,5,6,7,8,9,1,2,3,4];
+
+  let sum1 = 0, sum2 = 0;
+  for (let i = 0; i < 10; i++) {
+    sum1 += digits[i] * k1[i];
+    sum2 += digits[i] * k2[i];
+  }
+  let control = sum1 % 11;
+  if (control === 10) control = sum2 % 11;
+  if (control === 10) control = 0;
+  return base + control;
+}
+
 
 app.post('/api/customers', upload.single('passport'), async (req, res) => {
   try {
@@ -109,6 +137,13 @@ app.post('/api/customers', upload.single('passport'), async (req, res) => {
 
 // Delete customer
 app.delete('/api/customers/:id', async (req, res) => {
+  const customer = await Customer.findById(req.params.id);
+  if (!customer) {
+    return res.status(404).json({ error: "Customer not found." });
+  }
+  if (customer.balance !== 0) {
+    return res.status(400).json({ error: "Cannot delete account with non-zero balance." });
+  }
   await Customer.findByIdAndDelete(req.params.id);
   res.json({ success: true });
 });
@@ -126,4 +161,36 @@ app.patch('/api/customers/:id/deposit', async (req, res) => {
   res.json(customer);
 });
 
+app.patch('/api/customers/:id/withdraw', async (req, res) => {
+  const { amount } = req.body;
+  if (!amount || isNaN(amount) || Number(amount) <= 0) {
+    return res.status(400).json({ error: "Invalid amount." });
+  }
+  const customer = await Customer.findById(req.params.id);
+  if (!customer) return res.status(404).json({ error: "Customer not found." });
+  if (customer.balance < Number(amount)) {
+    return res.status(400).json({ error: "Insufficient funds." });
+  }
+  customer.balance -= Number(amount);
+  await customer.save();
+  res.json(customer);
+});
+
+app.patch('/api/customers/:id', async (req, res) => {
+  try {
+    const { name, surname } = req.body;
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) return res.status(404).json({ error: "Customer not found." });
+    customer.name = name;
+    customer.surname = surname;
+    await customer.save();
+    res.json(customer);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.listen(3001, () => console.log('Server is running'));
+
+
+console.log(generateValidPersonalCode(3, 94, 1, 28)); // Example for 1994-01-28, male

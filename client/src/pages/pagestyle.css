@@ -40,3 +40,8 @@ small {
 tbody {
       background-color: rgb(2, 2, 61);
 }
+
+i{
+  width: 50px;
+  color: black;
+}
