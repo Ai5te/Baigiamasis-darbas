@@ -1,6 +1,6 @@
 body {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  background-color: rgb(2, 2, 61);
+  background-color: #05093b;
   color: white;
 }
 
@@ -27,18 +27,34 @@ label {
     padding-bottom: 6px;
 }
 
-thead {
-  background-color: rgb(144, 223, 41);
-  color: white;
+thead, thead tr, thead th {
+  /* background-color: rgb(144, 223, 41) !important; */
+  background-color: #ff6b35 !important;
+  color: white !important;
+  text-align: center;
 }
-/* td,
-label,
-small {
-  color: white;
-} */
 
-tbody {
-      background-color: rgb(2, 2, 61);
+tbody, tbody tr, tbody td {
+    background-color: rgb(2, 2, 61) !important;
+    color: white !important;
+}
+
+td.button-cell {
+  text-align: center;
+}
+
+table button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h2{
+   color: #ff6b35;
+}
+
+.login-input {
+  max-width: 50%;
 }
 
 i{

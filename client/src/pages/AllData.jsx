@@ -23,10 +23,11 @@ export default function AllData() {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
+    if (name === "passport") {
+      setForm({ ...form, passport: files[0] });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -53,7 +54,7 @@ export default function AllData() {
         balance: 0
       });
       setMessage("Customer successfully added!");
-      setTimeout(() => setMessage(""), 3000); // Hide after 3 seconds
+      setTimeout(() => setMessage(""), 3000);
     } else {
       setMessage(newCustomer.error || "Failed to add customer");
       setTimeout(() => setMessage(""), 3000);
@@ -73,8 +74,6 @@ export default function AllData() {
   }
 };
 
-// Edit customer
-
 function handleEditClick(customer) {
   setEditingCustomer(customer);
 }
@@ -83,7 +82,7 @@ function handleEditClick(customer) {
     <div className="container mt-4">
       <h2>Customers</h2>
       {message && <div className="alert alert-info">{message}</div>}
-      <button className="btn btn-primary mb-3" onClick={() => setShowForm(true)}>
+      <button className="btn btn-outline-success mb-3" onClick={() => setShowForm(true)}>
         Add New Customer
       </button>
       {showForm && (
@@ -110,17 +109,6 @@ function handleEditClick(customer) {
               className="form-control"
             />
           </div>
-          {/* <div className="mb-2">
-            <input
-              type="text"
-              name="iban"
-              placeholder="IBAN Number"
-              value={form.iban}
-              onChange={handleChange}
-              required
-              className="form-control"
-            />
-          </div> */}
           <div className="mb-2">
             <input
               type="text"
@@ -138,7 +126,6 @@ function handleEditClick(customer) {
               name="passport"
               accept="image/*"
               onChange={handleChange}
-              // required
               className="form-control"
             />
           </div>
@@ -147,14 +134,11 @@ function handleEditClick(customer) {
         </form>
       )}
 
-      {/* Edit customer */}
-
       {editingCustomer && (
         <form
           className="mb-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            // Send PATCH/PUT request to update customer
             const res = await fetch(`http://localhost:3001/api/customers/${editingCustomer._id}`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -201,8 +185,8 @@ function handleEditClick(customer) {
             <th>IBAN</th>
             <th>Personal code</th>
             <th>Balance</th>
-            <th>Passport</th>
             <th>Delete</th>
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -216,14 +200,7 @@ function handleEditClick(customer) {
               <td>{c.iban}</td>
               <td>{c.personalCode}</td>
               <td>{c.balance}</td>
-              <td>
-                {c.passport && 
-                  <img src={`data:image/jpeg;base64,${c.passport}`} 
-                    alt="Passport" 
-                    style={{ width: 50, height: 50, objectFit: "cover" }} 
-                  />}
-              </td>
-              <td>
+              <td className="button-cell">
                 <button 
                 className="btn btn-danger btn-sm" 
                 onClick={() => handleDelete(c._id)}
@@ -231,7 +208,8 @@ function handleEditClick(customer) {
                 >
                   Delete
                 </button>
-
+              </td>
+              <td className="button-cell">
                 <button
                   className="btn btn-secondary btn-sm"
                   onClick={() => handleEditClick(c)}

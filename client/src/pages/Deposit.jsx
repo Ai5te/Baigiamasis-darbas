@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export default function Deposit() {
   const [search, setSearch] = useState({ name: "", surname: "", personalCode: "" });
-  const [customers, setCustomers] = useState([]); // store all matches
+  const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
@@ -11,7 +11,6 @@ export default function Deposit() {
     e.preventDefault();
     setMessage("");
     setSelectedCustomer(null);
-    // Fetch all customers and filter
     const res = await fetch("http://localhost:3001/api/customers");
     const allCustomers = await res.json();
     let matches = allCustomers;
@@ -97,7 +96,6 @@ export default function Deposit() {
       </form>
       {message && <div className="alert alert-info">{message}</div>}
 
-      {/* Show list if multiple customers found */}
       {customers.length > 1 && (
         <div className="mb-3">
           <h5>Select a customer:</h5>
@@ -116,7 +114,6 @@ export default function Deposit() {
         </div>
       )}
 
-      {/* Show customer info and deposit form if one is selected */}
       {selectedCustomer && (
         <div className="card p-3 mb-3">
           <h5>Customer Info</h5>
