@@ -10,7 +10,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
         <header>
             <nav>
                 <div className="container d-flex justify-content-between align-items-center">
-                    <img src={logo3} alt="Logo" />
+                    <Link to="/" onClick={() => setMenuOpen(false)}>
+                        <img src={logo3} alt="Logo" />
+                    </Link>
                         <ul className='d-flex nav-list gap-3'>
                                 <li>
                                     <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
