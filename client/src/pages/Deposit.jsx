@@ -58,7 +58,7 @@ export default function Deposit() {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
       <h2>Deposit</h2>
       <form className="mb-3" onSubmit={handleSearch}>
         <div className="row g-2">

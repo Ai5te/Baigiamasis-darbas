@@ -1,45 +1,46 @@
-import { Link } from 'react-router'; ;
-import logo1 from '../../assets/logo1.webp';
+import { useState } from "react";
+import { Link } from 'react-router';
+import logo3 from '../../assets/logo3.jpg';
 import './Header.css';
 
 const Header = ({ isLoggedIn, setIsLoggedIn }) => {
+    const [menuOpen, setMenuOpen] = useState(false);
+
     return (
-            <header>
-                <nav>
-                    <div className="container d-flex justify-content-between align-items-center">
-                        <img src="{<logo1/>}" alt="" />
+        <header>
+            <nav>
+                <div className="container d-flex justify-content-between align-items-center">
+                    <img src={logo3} alt="Logo" />
                         <ul className='d-flex nav-list gap-3'>
                                 <li>
-                                    <Link to="/">Home</Link>
+                                    <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
                                 </li>
-                                {isLoggedIn && (
-                                    <>
-                                        <li>
-                                            <Link to="/deposit">Deposit</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="/withdraw">Withdraw</Link>
-                                        </li>
-                                        <li>
-                                            <Link to="/alldata">All data</Link>
-                                        </li>
-                                    </>
-                                )}
+                            {isLoggedIn && (
+                                <>
+                                    <li>
+                                        <Link to="/deposit" onClick={() => setMenuOpen(false)}>Deposit</Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/withdraw" onClick={() => setMenuOpen(false)}>Withdraw</Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/alldata" onClick={() => setMenuOpen(false)}>All data</Link>
+                                    </li>
+                                </>
+                            )}
                         </ul>
-
                         {isLoggedIn ? (
-                            <button className='btn btn-secondary' onClick={() => setIsLoggedIn(false)}>
+                            <button className='btn btn-secondary mt-2 mt-md-0' onClick={() => setIsLoggedIn(false)}>
                                 Logout
                             </button>
                         ) : (
-                            <button className='btn btn-secondary'>
-                                <Link to="/login" className="no-underline">Login</Link>
-                            </button>
+                            <Link to="/login" className="btn btn-secondary mt-2 mt-md-0" onClick={() => setMenuOpen(false)}>
+                                Login
+                            </Link>
                         )}
-
-                    </div>
-                </nav>
-            </header>
+                </div>
+            </nav>
+        </header>
     );
 };
 

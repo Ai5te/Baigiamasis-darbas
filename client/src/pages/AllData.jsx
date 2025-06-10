@@ -13,6 +13,8 @@ export default function AllData() {
   });
   const [message, setMessage] = useState("");
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetch("http://localhost:3001/api/customers")
@@ -78,8 +80,14 @@ function handleEditClick(customer) {
   setEditingCustomer(customer);
 }
 
+const totalPages = Math.ceil(customers.length / itemsPerPage);
+const paginatedCustomers = customers
+  .slice()
+  .sort((a, b) => a.surname.localeCompare(b.surname))
+  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
-    <div className="container mt-4">
+    <div className="container mt-5">
       <h2>Customers</h2>
       {message && <div className="alert alert-info">{message}</div>}
       <button className="btn btn-outline-success mb-3" onClick={() => setShowForm(true)}>
@@ -190,10 +198,7 @@ function handleEditClick(customer) {
           </tr>
         </thead>
         <tbody>
-          {customers
-          .slice()
-          .sort((a, b) => a.surname.localeCompare(b.surname))
-          .map((c, idx) => (
+          {paginatedCustomers.map((c, idx) => (
             <tr key={idx}>
               <td>{c.name}</td>
               <td>{c.surname}</td>
@@ -223,6 +228,23 @@ function handleEditClick(customer) {
           ))}
         </tbody>
       </table>
+          <div className="d-flex justify-content-center my-3">
+              <button
+                className="btn btn-secondary me-2"
+                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="align-self-center">Page {currentPage} of {totalPages}</span>
+              <button
+                className="btn btn-secondary ms-2"
+                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+          </div>
     </div>
   );
 }

@@ -7,3 +7,11 @@
   text-decoration: none;
   color: white;
 }
+
+header img {
+  width: 80px;
+}
+
+header {
+  margin: 0 !important;
+}
