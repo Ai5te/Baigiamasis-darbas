@@ -180,6 +180,14 @@ const paginatedCustomers = customers
             placeholder="Surname"
             required
           />
+          <input
+           type="text" 
+           placeholder="Personal Code"
+            value={editingCustomer.personalCode}
+            onChange={e => setEditingCustomer({ ...editingCustomer, personalCode: e.target.value })}
+            className="form-control mb-2"
+            required
+           />
           <button className="btn btn-success me-2" type="submit">Save</button>
           <button className="btn btn-secondary" type="button" onClick={() => setEditingCustomer(null)}>Cancel</button>
         </form>
